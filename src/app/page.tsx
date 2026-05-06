@@ -31,6 +31,7 @@ export default function Home() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [open, setOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<Array<{ src: string }>>([]);
+  const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
 
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -118,7 +119,11 @@ export default function Home() {
   };
 
   const handleLike = async (postId: string) => {
-    await updateDoc(doc(db, 'posts', postId), { likes: increment(1) });
+    const isLiked = !!likedPosts[postId];
+    setLikedPosts(prev => ({ ...prev, [postId]: !isLiked }));
+    await updateDoc(doc(db, 'posts', postId), {
+      likes: increment(isLiked ? -1 : 1)
+    });
   };
 
   const handleDelete = async (postId: string) => {
@@ -127,14 +132,9 @@ export default function Home() {
     }
   };
 
-  const handleShare = async (post: any) => {
-    const shareText = `${post.content} - from My Daily Diary`;
-    if (navigator.share) {
-      await navigator.share({ title: 'Check out this post!', text: shareText, url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(shareText);
-      alert('Post content copied to clipboard!');
-    }
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link Copied!');
   };
 
   const handleComment = async (postId: string) => {
@@ -264,19 +264,19 @@ export default function Home() {
                     </div>
                   )}
 
-                  <div className="px-6 py-4 border-t border-gray-100">
+                  <div className="px-6 py-3 border-t border-gray-200">
                     <div className="flex justify-around items-center">
-                      <button onClick={() => handleLike(post.id)} className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                        <Heart size={20} />
-                        <span>Like {post.likes > 0 && `(${post.likes})`}</span>
+                      <button onClick={() => handleLike(post.id)} className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition-colors font-medium">
+                        <Heart size={22} className={`${likedPosts[post.id] ? 'text-red-500 fill-current' : 'text-gray-600'}`} />
+                        <span className="font-semibold text-sm">Like {post.likes > 0 && `(${post.likes})`}</span>
                       </button>
                       <button onClick={() => toggleComments(post.id)} className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                        <MessageSquare size={20} />
-                        <span>Comment</span>
+                        <MessageSquare size={22} />
+                        <span className="font-semibold text-sm">Comment</span>
                       </button>
-                      <button onClick={() => handleShare(post)} className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors font-medium">
-                        <Share2 size={20} />
-                        <span>Share</span>
+                      <button onClick={handleShare} className="flex items-center space-x-2 text-gray-600 hover:text-blue-600 transition-colors font-medium">
+                        <Share2 size={22} />
+                        <span className="font-semibold text-sm">Share</span>
                       </button>
                       {isAdmin && <button onClick={() => handleDelete(post.id)} className="flex items-center space-x-2 text-red-500 hover:text-red-700 transition-colors font-medium">
                         <Trash2 size={20} />
