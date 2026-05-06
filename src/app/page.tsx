@@ -181,7 +181,7 @@ export default function Home() {
                 {post.mediaUrls && post.mediaUrls.length > 0 && (
                   <div className="p-4 pt-0">
                     <div className={`grid gap-2 ${post.mediaUrls.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                       {post.mediaUrls.map((url, index) => (
+                       {post.mediaUrls.map((url: string, index: number) => (
                            <div key={index} className="bg-gray-100 rounded-lg overflow-hidden">
                                <img src={url} alt={`Post media ${index + 1}`} className="w-full max-h-[400px] object-contain mx-auto" />
                            </div>
