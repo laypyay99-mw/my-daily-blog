@@ -19,3 +19,8 @@ This Next.js application, developed within the Firebase Studio environment, serv
 
 - **Feature:** The application now features a redesigned error page that aligns with the overall visual style.
 - **Implementation:** The `error.tsx` file has been updated to include a more visually appealing layout, providing a more consistent and user-friendly experience in the event of an error.
+
+## Enhanced Image Rendering
+
+- **Feature:** The image rendering logic has been updated to improve the visual layout of posts with multiple images.
+- **Implementation:** Images within a post are now wrapped in a `div` with Tailwind CSS classes `flex flex-col items-center gap-6 py-4`, which arranges them in a vertical column with spacing. Each image is styled with `w-full max-w-lg h-auto rounded-xl shadow-md border border-gray-200` for a consistent and responsive presentation.
