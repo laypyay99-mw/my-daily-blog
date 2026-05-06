@@ -237,7 +237,7 @@ export default function Home() {
 
             <div className="space-y-10">
               {filteredPosts.map((post) => (
-                <div key={post.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
+                <div key={post.id} className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center space-x-3">
