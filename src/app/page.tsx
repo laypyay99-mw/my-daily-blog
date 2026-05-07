@@ -1,4 +1,4 @@
-''''use client';
+'use client';
 import { useState, useEffect } from 'react';
 import { db } from './firebase-client';
 import {
@@ -185,4 +185,3 @@ export default function Home() {
     </div>
   );
 }
-'''
