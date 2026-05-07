@@ -1,28 +1,22 @@
-'use client';
+''''use client';
 import { useState, useEffect } from 'react';
 import { db } from './firebase-client';
 import {
   collection,
-  addDoc,
   onSnapshot,
   query,
   orderBy,
-  serverTimestamp,
   Timestamp,
   doc,
   updateDoc,
   increment,
-  deleteDoc,
+  addDoc
 } from 'firebase/firestore';
-import { Heart, MessageSquare, Share2, Trash2, UserCircle2 } from 'lucide-react';
+import { Heart, MessageSquare, Share2, UserCircle2 } from 'lucide-react';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 export default function Home() {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [text, setText] = useState('');
-  const [links, setLinks] = useState('');
-  const [category, setCategory] = useState('Agriculture');
   const [posts, setPosts] = useState<any[]>([]);
   const [commentText, setCommentText] = useState<{ [key: string]: string }>({});
   const [comments, setComments] = useState<{ [key: string]: any[] }>({});
@@ -32,18 +26,6 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<Array<{ src: string }>>([]);
   const [likedPosts, setLikedPosts] = useState<{ [key: string]: boolean }>({});
-
-  const [showChangePassword, setShowChangePassword] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [adminPassword, setAdminPassword] = useState('1234');
-
-  useEffect(() => {
-    const storedPassword = localStorage.getItem('adminPassword');
-    if (storedPassword) {
-      setAdminPassword(storedPassword);
-    }
-  }, []);
 
   useEffect(() => {
     const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'));
@@ -62,74 +44,12 @@ export default function Home() {
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = () => {
-    const password = prompt("Enter admin password:");
-    if (password === adminPassword) {
-      setIsAdmin(true);
-    } else {
-      alert("Incorrect password.");
-    }
-  };
-
-  const handleLogout = () => {
-    setIsAdmin(false);
-  };
-
-  const handleChangePassword = () => {
-    if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-    if (newPassword.length < 4) {
-      alert("Password must be at least 4 characters long.");
-      return;
-    }
-    localStorage.setItem('adminPassword', newPassword);
-    setAdminPassword(newPassword);
-    setShowChangePassword(false);
-    setNewPassword('');
-    setConfirmPassword('');
-    alert("Password changed successfully.");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!text.trim() && !links.trim()) {
-      alert("Please enter some text or links to post.");
-      return;
-    }
-    const mediaUrls = links.split(',').map(link => link.trim()).filter(link => link);
-    try {
-      await addDoc(collection(db, 'posts'), {
-        author: 'Admin',
-        content: text,
-        mediaUrls: mediaUrls.length > 0 ? mediaUrls : [],
-        category: category,
-        createdAt: serverTimestamp(),
-        likes: 0,
-      });
-      setText('');
-      setLinks('');
-      setCategory('Agriculture');
-      alert("Post successful!");
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      alert("Failed to post. Please check console for details.");
-    }
-  };
-
   const handleLike = async (postId: string) => {
     const isLiked = !!likedPosts[postId];
     setLikedPosts(prev => ({ ...prev, [postId]: !isLiked }));
     await updateDoc(doc(db, 'posts', postId), {
       likes: increment(isLiked ? -1 : 1)
     });
-  };
-
-  const handleDelete = async (postId: string) => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      await deleteDoc(doc(db, 'posts', postId));
-    }
   };
 
   const handleShare = () => {
@@ -139,7 +59,7 @@ export default function Home() {
 
   const handleComment = async (postId: string) => {
     if (!commentText[postId]?.trim()) return;
-    await addDoc(collection(db, 'posts', postId, 'comments'), { text: commentText[postId], author: 'Visitor', createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'posts', postId, 'comments'), { text: commentText[postId], author: 'Visitor', createdAt: new Date() });
     setCommentText(prev => ({ ...prev, [postId]: '' }));
   };
 
@@ -169,51 +89,6 @@ export default function Home() {
         </header>
 
         <main className="pb-8">
-            {isAdmin ? (
-              <div className="mb-10">
-                  <div className="bg-white p-6 rounded-xl shadow-sm mb-4 border border-gray-200">
-                    <h2 className="text-xl font-semibold mb-4">Create a New Post</h2>
-                    <select
-                        className="w-full p-3 mb-3 text-sm bg-gray-50 border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)} >
-                        <option value="Agriculture">Agriculture</option>
-                        <option value="Construction">Construction</option>
-                        <option value="Kids Gallery">Kids Gallery</option>
-                    </select>
-                    <textarea className="w-full p-4 bg-gray-50 border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base resize-none" placeholder="What happened today?" value={text} onChange={(e) => setText(e.target.value)} rows={5} />
-                    <input className="w-full p-3 text-sm border-t mt-3 bg-gray-50 border-gray-200" placeholder="Image URLs, separated by commas..." value={links} onChange={(e) => setLinks(e.target.value)} />
-                    <button onClick={handleSubmit} className="w-full bg-blue-600 text-white py-3 rounded-lg mt-4 font-semibold hover:bg-blue-700 transition-colors">Publish Post</button>
-                  </div>
-                  <div className="text-center mb-8 flex justify-center items-center space-x-6">
-                      <button onClick={handleLogout} className="text-sm text-gray-600 hover:text-red-600 font-medium">Logout</button>
-                      <button onClick={() => setShowChangePassword(!showChangePassword)} className="text-sm text-gray-600 hover:text-blue-600 font-medium">Change Password</button>
-                  </div>
-                  {showChangePassword && (
-                      <div className="bg-white p-5 rounded-xl shadow-sm mb-8 border border-gray-200 max-w-md mx-auto">
-                          <h3 className="text-lg font-semibold mb-4 text-center">Change Admin Password</h3>
-                          <input
-                              type="password"
-                              placeholder="New Password"
-                              value={newPassword}
-                              onChange={(e) => setNewPassword(e.target.value)}
-                              className="w-full p-3 mb-3 text-sm bg-gray-50 border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                          />
-                          <input
-                              type="password"
-                              placeholder="Confirm New Password"
-                              value={confirmPassword}
-                              onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="w-full p-3 mb-3 text-sm bg-gray-50 border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                          />
-                          <button onClick={handleChangePassword} className="w-full bg-blue-600 text-white py-3 rounded-lg mt-2 font-semibold hover:bg-blue-700 transition-colors">Save New Password</button>
-                      </div>
-                  )}
-              </div>
-            ) : (
-              <div className="text-center py-4"><button onClick={handleLogin} className="text-xs text-gray-500 hover:underline">Admin Login</button></div>
-            )}
-
             <div className="mb-10">
               <input type="text" placeholder="Search diary entries..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full p-4 rounded-full bg-white border-gray-200 shadow-sm focus:border-blue-500 focus:ring-blue-500" />
             </div>
@@ -278,10 +153,6 @@ export default function Home() {
                         <Share2 size={22} />
                         <span className="font-semibold text-sm">Share</span>
                       </button>
-                      {isAdmin && <button onClick={() => handleDelete(post.id)} className="flex items-center space-x-2 text-red-500 hover:text-red-700 transition-colors font-medium">
-                        <Trash2 size={20} />
-                        <span>Delete</span>
-                      </button>}
                     </div>
                   </div>
 
@@ -314,3 +185,4 @@ export default function Home() {
     </div>
   );
 }
+'''
