@@ -25,7 +25,7 @@ export default function Admin() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [adminPassword, setAdminPassword] = useState('1234');
+  const [adminPassword, setAdminPassword] = useState('147330');
 
   useEffect(() => {
     const storedPassword = localStorage.getItem('adminPassword');
