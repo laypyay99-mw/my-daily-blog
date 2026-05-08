@@ -1,35 +1,32 @@
-# Application Overview
+# My Daily Diary - Blueprint
 
-This Next.js application, developed within the Firebase Studio environment, serves as a personal blogging platform. It allows users to create and view posts, which can include both text and media (images or videos) shared from Google Drive.
+## Overview
 
-# Style, Design, and Features
+My Daily Diary is a web application that allows users to create and manage their own private, online diary. It provides a simple and intuitive interface for writing, editing, and deleting diary entries. The application also includes features for organizing entries by category, searching for specific entries, and adding images to entries.
 
-## Initial Version
+## Project Outline
 
-- **Core Functionality:** Users can create text-only posts and view a chronological feed of all entries.
-- **Design:** The application features a clean, modern design with a focus on readability. It utilizes a dark theme with a blurred, background image, and a white, semi-transparent card-based layout for posts.
-- **Technology:** Built with Next.js and Firebase, the application uses Firestore for real-time data synchronization.
+### Style and Design
 
-## Media Integration (Google Drive)
+*   **Layout:** The application features a clean, modern design with a simple, intuitive layout. The main content area is a single column, with a sidebar for navigation.
+*   **Color Palette:** The color palette is soft and muted, with a focus on blues, grays, and whites. This creates a calming and relaxing atmosphere that is conducive to writing.
+*   **Typography:** The typography is clean and easy to read, with a focus on sans-serif fonts. This ensures that the content is the main focus of the application.
 
-- **Feature:** The application supports media sharing from Google Drive. Users can paste a Google Drive link to an image or video, and it will be embedded in their post.
-- **Implementation:** The application extracts the file ID from the Google Drive link and uses it to construct an embeddable URL. This allows for easy sharing of media without the need for direct uploads.
+### Features
 
-## Polished Error Handling
+*   **User Authentication:** Users can create an account and log in to access their diary.
+*   **Diary Entries:** Users can create, edit, and delete diary entries. Each entry can have a title, content, and a category.
+*   **Categories:** Users can create and manage their own categories for organizing their diary entries.
+*   **Search:** Users can search for specific diary entries by keyword.
+*   **Image Uploads:** Users can upload images to their diary entries.
 
-- **Feature:** The application now features a redesigned error page that aligns with the overall visual style.
-- **Implementation:** The `error.tsx` file has been updated to include a more visually appealing layout, providing a more consistent and user-friendly experience in the event of an error.
+## Current Task
 
-## Enhanced Image Rendering
+### Fix Post Deletion
 
-- **Feature:** The image rendering logic has been updated to improve the visual layout of posts with multiple images.
-- **Implementation:** Images within a post are now wrapped in a `div` with Tailwind CSS classes `flex flex-col items-center gap-6 py-4`, which arranges them in a vertical column with spacing. Each image is styled with `w-full max-w-lg h-auto rounded-xl shadow-md border border-gray-200` for a consistent and responsive presentation.
+**Plan:**
 
-## UI/UX Overhaul
-
-- **Feature:** A complete redesign of the user interface for a modern and professional look and feel.
-- **Admin Login:** The post creation form is hidden by default. A hidden "Login" link at the bottom of the page reveals a password prompt. Correct password entry reveals the form.
-- **Category Filter:** Categories have been redesigned into sleek, rounded-full pill tags. The active filter is highlighted, and the tags are presented in a horizontal scrollable row.
-- **Modern Post Layout:** Posts now use a clean card-style layout with soft shadows (`shadow-sm`), increased padding, and improved spacing for a more professional appearance.
-- **Facebook-style Gallery with Lightbox:** Posts with multiple images now display them in a neat collage grid. Clicking an image opens it in a full-screen lightbox view, provided by the `yet-another-react-lightbox` library.
-- **Color Palette & Typography:** The application now uses a clean white background. The previous heavy blue elements have been replaced with a minimalist header and professional fonts for a more refined aesthetic.
+1.  **Diagnose the problem:** The user is unable to delete diary entries. The initial investigation suggests that the problem may be with the Firebase security rules.
+2.  **Verify security rules:** I will examine the Firebase security rules to ensure that they are not preventing users from deleting their own posts.
+3.  **Update security rules:** If the security rules are too restrictive, I will update them to allow users to delete their own posts.
+4.  **Test the fix:** I will test the fix by attempting to delete a post. If the fix is successful, the post will be deleted and the user will be notified.
